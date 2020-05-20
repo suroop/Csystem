@@ -4,6 +4,29 @@
 #include<string>
 #include<cstring>
 using namespace std;
+typedef struct info_Worker
+{
+    string name;
+    string sex;
+    int age;
+    string type;
+    double wage;
+    int ID;
+    string pass;
+    int count;
+} info_Worker;
+typedef struct info_Manager
+{
+    string section;
+    string name;
+    string sex;
+    int age;
+    string type;
+    double wage;
+    int ID;
+    string pass;
+    int count;
+} info_Manager;
 class Person{
 protected:
     int ID;
@@ -42,26 +65,5 @@ class Manager:protected Worker{
         void menu();
         ~Manager();
 };
-typedef struct info_Worker{
-    string name;
-    string sex;
-    int age;
-    string type;
-    double wage;
-    int ID;
-    string pass;
-    int count;
-} info_Worker;
-typedef struct info_Manager{
-    string section;
-    string name;
-    string sex;
-    int age;
-    string type;
-    double wage;
-    int ID;
-    string pass;
-    int count;
-} info_Manager;
 void login(int);
 void regist(int);
