@@ -3,7 +3,7 @@
 info_Worker* writeFromFile(int choice){     //Export workers' data
     ifstream infile;
     int i=0;
-    info_Worker workers[100];
+    static info_Worker workers[100];
     infile.open("worker.txt",ios::in);
     if(!infile){
         cerr<<"error"<<endl;
@@ -19,7 +19,7 @@ info_Worker* writeFromFile(int choice){     //Export workers' data
 info_Manager *writeFromFile(float choice){  //Export managers' data
     ifstream infile;
     int i = 0;
-    info_Manager managers[100];
+    static info_Manager managers[100];
     infile.open("manager.txt", ios::in);
     if (!infile)
     {
@@ -219,29 +219,116 @@ int search(info_Manager manager[], int id)
 bool sortBySex(int option,info_Worker worker[]){
     string sex=(option==1)?"female":"male";
     for(int i=0;i<worker->count;i++){
-        if ((worker+i)->sex==sex){
-            cout << (worker + i)->ID << endl;
-            cout << (worker + i)->pass << endl;
-            cout << (worker + i)->name << endl;
-            cout << (worker + i)->sex << endl;
-            cout << (worker + i)->age << endl;
+        if ((worker + i)->sex == sex ){
+            cout << (worker + i)->pass << " ";
+            cout << (worker + i)->name << " ";
+            cout << (worker + i)->sex << " ";
+            cout << (worker + i)->age << " ";
             cout << (worker + i)->wage << endl;
         }
     }
 }
-/*bool sortBytemp(int option, info_Worker worker[]){
-    string temp;
-    switch (option)
-    {
-    case 1:
-        break;
-    
-    default:
-        break;
+info_Worker* sortBysection(string section,info_Worker worker[])
+{   
+    static info_Worker newworker[100];
+    int n=0;
+    for(int i=0;i<worker->count;i++){
+        if ((worker+i)->type==section)
+            *(newworker + n) = *(worker+i);
+            n++;
     }
-}*/
-
-Person::Person(int ID,string pass){         // Person's Constructor 
+    newworker->count=n;
+    return newworker;
+}
+bool sortByID(info_Worker worker[]){
+    int begin = 0;
+    int end = worker->count - 1;
+    while (begin < end){
+        int min = begin, max = begin;
+        for (int i = begin; i <= end; ++i){
+            if (worker[min].ID > worker[i].ID){
+                min = i;
+            }
+            if (worker[max].ID < worker[i].ID){
+                max = i;
+            }
+        }
+        swap(worker[min], worker[begin]);
+        if (max == begin){
+            max = min;
+        }
+        swap(worker[max], worker[end]);
+        begin++;
+        end--;
+    }
+}
+bool sortByAge(info_Worker worker[])
+{
+    int begin = 0;
+    int end = worker->count - 1;
+    while (begin < end)
+    {
+        int min = begin, max = begin;
+        for (int i = begin; i <= end; ++i)
+        {
+            if (worker[min].age > worker[i].age)
+            {
+                min = i;
+            }
+            if (worker[max].age < worker[i].age)
+            {
+                max = i;
+            }
+        }
+        swap(worker[min], worker[begin]);
+        if (max == begin)
+        {
+            max = min;
+        }
+        swap(worker[max], worker[end]);
+        begin++;
+        end--;
+    }
+}
+bool sortByWage(info_Worker worker[])
+{
+    int begin = 0;
+    int end = worker->count - 1;
+    while (begin < end)
+    {
+        int min = begin, max = begin;
+        for (int i = begin; i <= end; ++i)
+        {
+            if (worker[min].wage > worker[i].wage)
+            {
+                min = i;
+            }
+            if (worker[max].wage < worker[i].wage)
+            {
+                max = i;
+            }
+        }
+        swap(worker[min], worker[begin]);
+        if (max == begin)
+        {
+            max = min;
+        }
+        swap(worker[max], worker[end]);
+        begin++;
+        end--;
+    }
+}
+bool printAll(info_Worker worker[]){
+    for(int i=0;i<worker->count;i++){
+        cout << (worker + i)->ID << " ";
+        cout << (worker + i)->pass << " ";
+        cout << (worker + i)->name << " ";
+        cout << (worker + i)->sex << " ";
+        cout << (worker + i)->age << " ";
+        cout << (worker + i)->wage << " ";
+    }
+} 
+Person::Person(int ID, string pass){ // Person's Constructor
     this->ID = ID;
     this->pass=pass;
 }
@@ -506,22 +593,26 @@ void Manager::Sort(){
     cout << "4.by wage" << endl;
     cin>>option1;
     info_Worker *worker=writeFromFile(option1);
+    info_Worker *newworker=sortBysection(this->section,worker);
     switch (option1)
     {
     case 1:
-        /* code */
+        sortByID(worker);
+        printAll(worker);
         break;
     case 2:
         cout << "1.female" << endl;
         cout << "2.male" << endl;
         cin>>option2;
-        sortBySex(option2,worker);
+        sortBySex(option2,newworker);
         break;
     case 3:
-        /* code */
+        sortByAge(worker);
+        printAll(worker);
         break;
     case 4:
-        /* code */
+        sortByWage(worker);
+        printAll(worker);
         break;
     default:
         break;
