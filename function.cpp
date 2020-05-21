@@ -3,36 +3,36 @@
 info_Worker* writeFromFile(int choice){     //Export workers' data
     ifstream infile;
     int i=0;
-    static info_Worker workers[100];
+    static info_Worker w[100];
     infile.open("worker.txt",ios::in);
     if(!infile){
         cerr<<"error"<<endl;
         exit(1);
     }
-    while (infile >> workers[i].ID >> workers[i].pass >> workers[i].name >> workers[i].sex >> workers[i].age >> workers[i].type >> workers[i].wage ){
+    while (infile >> w[i].ID >> w[i].pass >> w[i].name >> w[i].sex >> w[i].age >> w[i].type >> w[i].wage ){
         i++;    
     }
-    workers[0].count=i;
+    w[0].count=i;
     infile.close();
-    return workers;
+    return w;
 }
 info_Manager *writeFromFile(float choice){  //Export managers' data
     ifstream infile;
     int i = 0;
-    static info_Manager managers[100];
+    static info_Manager m[100];
     infile.open("manager.txt", ios::in);
     if (!infile)
     {
         cerr << "error" << endl;
         exit(1);
     }
-    while (infile >> managers[i].ID >> managers[i].pass >> managers[i].name >> managers[i].sex >> managers[i].age >> managers[i].type >> managers[i].wage >> managers[i].section)
+    while (infile >> m[i].ID >> m[i].pass >> m[i].name >> m[i].sex >> m[i].age >> m[i].type >> m[i].wage >> m[i].section)
     {
         i++;
     }
-    managers[0].count = i;
+    m[0].count = i;
     infile.close();
-    return managers;
+    return m;
 }
 bool writeIntoFile(info_Worker workers[]){        //import workers' data
     ofstream outfile;
@@ -67,9 +67,6 @@ bool writeIntoFile(info_Manager managers[]){       //import managers' data
 void regist(int choice){                        //regist
     int option1 = 0;
     float option2 = 0;
-    string filename = (choice == 1 ? "manager.txt" : "worker.txt");
-    //char filename[10];
-    //strcpy(filename[10],file);
     bool flag = true;
     int id;
     string pass, checkedpass;
@@ -81,10 +78,10 @@ void regist(int choice){                        //regist
     string section;
     info_Worker *workers = NULL;
     info_Manager *managers = NULL;
+    cout<<"input the ID you want to create:"<<endl;
     cin >> id;
-    if (choice == 2)
-    {
-        info_Worker *workers = writeFromFile(option1);
+    if (choice == 2){
+        workers = writeFromFile(option1);
         for (option1 = 0; option1 < workers->count; option1++)
         {
             if (id == (workers + option1)->ID)
@@ -114,31 +111,50 @@ void regist(int choice){                        //regist
         regist(choice);
     }
     else{
+        cout<<"please input your password:"<<endl;
         cin >> pass;
-        cin >> checkedpass;
         do
         {
+            cout << "please input your password again:" << endl;
             cin >> checkedpass;
-            if (checkedpass != pass)
-            {
-                cout << "error" << endl;
-            }
         } while (checkedpass != pass);
     }
+    cout << "please input your name:" << endl;
     cin >> name;
+    cout << "please input your sex(male/female):" << endl;
     cin >> sex;
+    cout << "please input your age:" << endl;
     cin >> age;
+    cout << "please input your type(PD/HRD/FD/TD/ED):" << endl;
     cin >> type;
+    cout << "please input your wage:" << endl;
     cin >> wage;
-    if (option2)
-    {
+    if (choice==2){
+        (workers + (workers)->count )->ID = id;
+        (workers + (workers)->count )->pass = pass;
+        (workers + (workers)->count )->name = name;
+        (workers + (workers)->count )->sex = sex;
+        (workers + (workers)->count )->age = age;
+        (workers + (workers)->count)->type = type;
+        (workers + (workers)->count )->wage = wage;
+        (workers)->count++;
         writeIntoFile(workers);
     }
-    else
-    {
+    else{
+        cout << "please input your section:" << endl;
         cin >> section;
+        (managers + (managers)->count)->ID = id;
+        (managers + (managers)->count)->pass = pass;
+        (managers + (managers)->count)->name = name;
+        (managers + (managers)->count)->sex = sex;
+        (managers + (managers)->count)->age = age;
+        (managers + (managers)->count)->wage = wage;
+        (managers + (managers)->count)->type = type;
+        (managers + (managers)->count)->section = section;
+        (managers)->count++;
         writeIntoFile(managers);
     }
+    cout<<"success in registing"<<endl;
 }
 void login(int choice){                         //login
     int option1 = 0;
@@ -164,7 +180,7 @@ void login(int choice){                         //login
                 break;
             }
         }
-        if(!flag){
+        if(flag){
             cout<<"NO FUND"<<endl;
             exit(1);
         }
@@ -185,7 +201,7 @@ void login(int choice){                         //login
                 break;
             }
         }
-        if(!flag){
+        if(flag){
             cout<<"NO FUND"<<endl;
             exit(1);
         }
@@ -194,6 +210,18 @@ void login(int choice){                         //login
             manager.menu();
         }
     }
+}
+bool printAll(info_Worker worker[]){
+    cout<<"step1"<<endl;
+    for (int i = 0; i < worker->count; i++){
+        cout << (worker + i)->ID << " ";
+        cout << (worker + i)->pass << " ";
+        cout << (worker + i)->name << " ";
+        cout << (worker + i)->sex << " ";
+        cout << (worker + i)->age << " ";
+        cout << (worker + i)->wage << endl;
+    }
+    return true;
 }
 int search(info_Worker worker[],int id){
     int position;
@@ -220,11 +248,13 @@ bool sortBySex(int option,info_Worker worker[]){
     string sex=(option==1)?"female":"male";
     for(int i=0;i<worker->count;i++){
         if ((worker + i)->sex == sex ){
+            cout << (worker + i)->ID << " ";
             cout << (worker + i)->pass << " ";
             cout << (worker + i)->name << " ";
             cout << (worker + i)->sex << " ";
             cout << (worker + i)->age << " ";
             cout << (worker + i)->wage << endl;
+            cout << (worker + i)->type << endl;
         }
     }
 }
@@ -262,12 +292,10 @@ bool sortByID(info_Worker worker[]){
         end--;
     }
 }
-bool sortByAge(info_Worker worker[])
-{
+bool sortByAge(info_Worker worker[]){
     int begin = 0;
     int end = worker->count - 1;
-    while (begin < end)
-    {
+    while (begin < end){
         int min = begin, max = begin;
         for (int i = begin; i <= end; ++i)
         {
@@ -318,16 +346,7 @@ bool sortByWage(info_Worker worker[])
         end--;
     }
 }
-bool printAll(info_Worker worker[]){
-    for(int i=0;i<worker->count;i++){
-        cout << (worker + i)->ID << " ";
-        cout << (worker + i)->pass << " ";
-        cout << (worker + i)->name << " ";
-        cout << (worker + i)->sex << " ";
-        cout << (worker + i)->age << " ";
-        cout << (worker + i)->wage << " ";
-    }
-} 
+
 Person::Person(int ID, string pass){ // Person's Constructor
     this->ID = ID;
     this->pass=pass;
@@ -405,6 +424,7 @@ void Worker::Editor(){
         break;
     }
     cout<<"edited"<<endl;
+    writeIntoFile(p);
 }
 Worker::~Worker(){
     cout<<"Worker"<<endl;
@@ -453,11 +473,23 @@ void Manager::menu(){
 }
 void Manager::Add(){
     string password,name,type;
-    int ID,age;
+    info_Worker *p=NULL;
+    int ID, age;
     double wage;
     bool flag;
     cout << "ID" << endl;
     cin>>ID;
+    p = writeFromFile(ID);
+    for (int i = 0; i < p->count; i++){
+        if (ID == (p + i)->ID){
+            cout << "registed" << endl;
+            flag = false;
+            break;
+        }
+    }
+    if (!flag){
+        exit(1);
+    }
     cout << "password" << endl;
     cin>>password;
     cout << "name" << endl;
@@ -468,34 +500,26 @@ void Manager::Add(){
     cin>>wage;
     cout << "type" << endl;
     cin>>type;
-    info_Worker *p=writeFromFile(ID);
-    for(int i=0;i<p->count;i++){
-        if(ID==(p+i)->ID){
-            cout<<"registed"<<endl;
-            flag=false;
-            break;
-        }
-    }
-    if(!flag){
-        Add();
-    }
-    else{
-        (p + (p)->count + 1)->ID = ID;
-        (p + (p)->count + 1)->pass = password;
-        (p + (p)->count + 1)->name = name;
-        (p + (p)->count + 1)->sex = sex;
-        (p + (p)->count + 1)->age = age;
-        (p + (p)->count + 1)->wage = wage;
-        (p + (p)->count + 1)->type = type;
-    }
+    cout<<p->count<<endl;
+    (p + (p)->count )->ID = ID;
+    (p + (p)->count )->pass = password;
+    (p + (p)->count )->name = name;
+    (p + (p)->count )->sex = sex;
+    (p + (p)->count )->age = age;
+    (p + (p)->count )->wage = wage;
+    (p + (p)->count )->type = type;
+    (p)->count++;
+    cout << p->count << endl;
+    writeIntoFile(p);
 }
 void Manager::Delete(){
     string ch;
-    int id;
+    int id=0;
     cout<<"id:"<<endl;
     cin>>id;
     info_Worker * worker=writeFromFile(id);
     int target=search(worker,id);
+    cout<<target<<endl;
     cout << (worker + target)->ID << endl;
     cout << (worker + target)->name << endl;
     cout << (worker + target)->sex << endl;
@@ -503,11 +527,16 @@ void Manager::Delete(){
     cout<<"sure?(Y/N)"<<endl;
     cin>>ch;
     if(ch=="Y"||ch=="y"){
-        for(;(worker)->count;target++){
-            *(worker + target) = *(worker + target+1);
+        cout<<"doing"<<endl;
+        for(;target<(worker)->count;target++){
+            cout << "step:"<<target << endl;
+            worker[target]=worker[target+1];
         }
+
         writeIntoFile(worker);
+        printAll(worker);
     }
+    cout<<"finshed"<<endl;
 }
 void Manager::Editor(){
     int choice1;
@@ -516,6 +545,8 @@ void Manager::Editor(){
     cout<<"2.workers"<<endl;
     cin>>choice1;
     if(choice1==1){
+        info_Manager *manager = writeFromFile(choice2);
+        int target = search(manager, this->ID);
         int option;
         string temp;
         cout << "1.name" << endl;
@@ -524,8 +555,6 @@ void Manager::Editor(){
         cin>>option;
         cout<<"content"<<endl;
         cin>>temp;
-        info_Manager * manager=writeFromFile(choice2);
-        int target=search(manager,this->ID);
         switch (option)
         {
         case 1:
@@ -540,6 +569,7 @@ void Manager::Editor(){
         default:
             break;
         }
+        writeIntoFile(manager);
     }
     else if(choice1==2){
         int ID;
@@ -547,6 +577,7 @@ void Manager::Editor(){
         cin>>ID;
         info_Worker *worker = writeFromFile(choice1);
         int target = search(worker, ID);
+        cout<<target<<endl;
         int option;
         cout << "1.name" << endl;
         cout << "2.age" << endl;
@@ -577,6 +608,7 @@ void Manager::Editor(){
         default:
             break;
         }
+        writeIntoFile(worker);
     }
     else
     {

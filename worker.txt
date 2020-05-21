@@ -1,0 +1,4 @@
+123 456 suroop male 78 TD 50000
+456 789 suroop female 48 TD 30000
+789 123 surop male 25 ED 10000
+
