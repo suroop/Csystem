@@ -1,4 +1,6 @@
-123 456 suroop male 78 TD 50000
-456 789 suroop female 48 TD 30000
-789 123 surop male 25 ED 10000
-
+123 456 John male 38 TD 50000
+456 789 Alice female 48 TD 30000
+789 123 Sam male 25 ED 10000
+147 258 Amy female 46 TD 35000
+258 369 Bob male 36 TD 45000
+369 147 Chri male 33 TD 65000

@@ -212,7 +212,6 @@ void login(int choice){                         //login
     }
 }
 bool printAll(info_Worker worker[]){
-    cout<<"step1"<<endl;
     for (int i = 0; i < worker->count; i++){
         cout << (worker + i)->ID << " ";
         cout << (worker + i)->pass << " ";
@@ -253,22 +252,22 @@ bool sortBySex(int option,info_Worker worker[]){
             cout << (worker + i)->name << " ";
             cout << (worker + i)->sex << " ";
             cout << (worker + i)->age << " ";
-            cout << (worker + i)->wage << endl;
+            cout << (worker + i)->wage <<" ";
             cout << (worker + i)->type << endl;
         }
     }
 }
-info_Worker* sortBysection(string section,info_Worker worker[])
-{   
-    static info_Worker newworker[100];
+info_Worker* sortBysection(string section,info_Worker worker[]){   
+    static info_Worker nw[100];
     int n=0;
-    for(int i=0;i<worker->count;i++){
-        if ((worker+i)->type==section)
-            *(newworker + n) = *(worker+i);
+    for (int i = 0; i < worker->count; i++){
+        if ((worker + i)->type == section){
+            nw[n]= worker[i];
             n++;
+        }
     }
-    newworker->count=n;
-    return newworker;
+    nw[0].count=n;
+    return nw;
 }
 bool sortByID(info_Worker worker[]){
     int begin = 0;
@@ -283,6 +282,7 @@ bool sortByID(info_Worker worker[]){
                 max = i;
             }
         }
+        worker[min].count = worker[begin].count;
         swap(worker[min], worker[begin]);
         if (max == begin){
             max = min;
@@ -297,17 +297,15 @@ bool sortByAge(info_Worker worker[]){
     int end = worker->count - 1;
     while (begin < end){
         int min = begin, max = begin;
-        for (int i = begin; i <= end; ++i)
-        {
-            if (worker[min].age > worker[i].age)
-            {
+        for (int i = begin; i <= end; ++i){
+            if (worker[min].age > worker[i].age){
                 min = i;
             }
-            if (worker[max].age < worker[i].age)
-            {
+            if (worker[max].age < worker[i].age){
                 max = i;
             }
         }
+        worker[min].count = worker[begin].count;
         swap(worker[min], worker[begin]);
         if (max == begin)
         {
@@ -336,6 +334,7 @@ bool sortByWage(info_Worker worker[])
                 max = i;
             }
         }
+        worker[min].count = worker[begin].count;
         swap(worker[min], worker[begin]);
         if (max == begin)
         {
@@ -532,7 +531,7 @@ void Manager::Delete(){
             cout << "step:"<<target << endl;
             worker[target]=worker[target+1];
         }
-
+        worker[0].count--;
         writeIntoFile(worker);
         printAll(worker);
     }
@@ -629,8 +628,8 @@ void Manager::Sort(){
     switch (option1)
     {
     case 1:
-        sortByID(worker);
-        printAll(worker);
+        sortByID(newworker);
+        printAll(newworker);
         break;
     case 2:
         cout << "1.female" << endl;
@@ -639,12 +638,12 @@ void Manager::Sort(){
         sortBySex(option2,newworker);
         break;
     case 3:
-        sortByAge(worker);
-        printAll(worker);
+        sortByAge(newworker);
+        printAll(newworker);
         break;
     case 4:
-        sortByWage(worker);
-        printAll(worker);
+        sortByWage(newworker);
+        printAll(newworker);
         break;
     default:
         break;
