@@ -1,0 +1,49 @@
+class infoManager{
+    private:
+        infoManager *next=NULL;
+        static int count;
+    public:
+        info_Manager *information = NULL;
+        infoManager();
+        static int getLength();
+        infoManager nextinfo(infoManager *);
+        ~infoManager();
+};
+
+infoManager::infoManager(){
+    count++;
+}
+int infoManager::getLength(){
+    return count;
+}
+infoManager infoManager::nextinfo(infoManager *ptr){
+    this->next=ptr;
+
+}
+infoManager::~infoManager(){
+    delete information;
+}
+
+infoManager infoList(infoManager & information1){
+    ifstream infile;
+    infoManager *pptr=&information1;
+    int i = 0;
+    infile.open("manager.txt", ios::in);
+    if (!infile){
+        cerr << "error" << endl;
+        exit(1);
+    }
+    while (infile >> information1.information->ID){
+        infile >> information1.information->pass;
+        infile >> information1.information->name;
+        infile >> information1.information->age;
+        infile >> information1.information->sex;
+        infile >> information1.information->type;
+        infile >> information1.information->wage;
+        infile >> information1.information->section;
+        infoManager *ptr = new infoManager();
+        pptr->nextinfo(ptr);
+        pptr=ptr;
+    }
+    return information1;
+}

@@ -1,5 +1,7 @@
 #include "class.h"
 
+
+
 info_Worker* writeFromFile(int choice){     //Export workers' data
     ifstream infile;
     int i=0;
@@ -64,153 +66,6 @@ bool writeIntoFile(info_Manager managers[]){       //import managers' data
     }
     return true;
 }
-void regist(int choice){                        //regist
-    int option1 = 0;
-    float option2 = 0;
-    bool flag = true;
-    int id;
-    string pass, checkedpass;
-    string name;
-    string sex;
-    int age;
-    string type;
-    double wage;
-    string section;
-    info_Worker *workers = NULL;
-    info_Manager *managers = NULL;
-    cout<<"input the ID you want to create:"<<endl;
-    cin >> id;
-    if (choice == 2){
-        workers = writeFromFile(option1);
-        for (option1 = 0; option1 < workers->count; option1++)
-        {
-            if (id == (workers + option1)->ID)
-            {
-                cout << "registed" << endl;
-                flag = false;
-                break;
-            }
-        }
-        option2 = 1;
-    }
-    else
-    {
-        managers = writeFromFile(option2);
-        for (option1 = 0; option1 < managers->count; option1++)
-        {
-            if (id == (managers + option1)->ID)
-            {
-                cout << "registed" << endl;
-                flag = false;
-                break;
-            }
-        }
-    }
-    if (!flag)
-    {
-        regist(choice);
-    }
-    else{
-        cout<<"please input your password:"<<endl;
-        cin >> pass;
-        do
-        {
-            cout << "please input your password again:" << endl;
-            cin >> checkedpass;
-        } while (checkedpass != pass);
-    }
-    cout << "please input your name:" << endl;
-    cin >> name;
-    cout << "please input your sex(male/female):" << endl;
-    cin >> sex;
-    cout << "please input your age:" << endl;
-    cin >> age;
-    cout << "please input your type(PD/HRD/FD/TD/ED):" << endl;
-    cin >> type;
-    cout << "please input your wage:" << endl;
-    cin >> wage;
-    if (choice==2){
-        (workers + (workers)->count )->ID = id;
-        (workers + (workers)->count )->pass = pass;
-        (workers + (workers)->count )->name = name;
-        (workers + (workers)->count )->sex = sex;
-        (workers + (workers)->count )->age = age;
-        (workers + (workers)->count)->type = type;
-        (workers + (workers)->count )->wage = wage;
-        (workers)->count++;
-        writeIntoFile(workers);
-    }
-    else{
-        cout << "please input your section:" << endl;
-        cin >> section;
-        (managers + (managers)->count)->ID = id;
-        (managers + (managers)->count)->pass = pass;
-        (managers + (managers)->count)->name = name;
-        (managers + (managers)->count)->sex = sex;
-        (managers + (managers)->count)->age = age;
-        (managers + (managers)->count)->wage = wage;
-        (managers + (managers)->count)->type = type;
-        (managers + (managers)->count)->section = section;
-        (managers)->count++;
-        writeIntoFile(managers);
-    }
-    cout<<"success in registing"<<endl;
-}
-void login(int choice){                         //login
-    int option1 = 0;
-    float option2 = 0;
-    bool flag=true;
-    info_Worker *workers = NULL;
-    info_Manager *managers = NULL;
-    int ID;
-    string pass;
-    cout<<"please input your ID:"<<endl;
-    cin >> ID;
-    cout<<"please input your password"<<endl;
-    cin >> pass;
-    if (choice == 2)
-    {
-        info_Worker *workers = writeFromFile(option1);
-        for (option1 = 0; option1 < workers->count; option1++)
-        {
-            if (ID == (workers + option1)->ID && pass == (workers + option1)->pass)
-            {
-                cout << "logining" << endl;
-                flag=false;
-                break;
-            }
-        }
-        if(flag){
-            cout<<"NO FUND"<<endl;
-            exit(1);
-        }
-        else{
-            Worker worker((workers + option1)->name, (workers + option1)->sex, (workers + option1)->age, (workers + option1)->type, (workers + option1)->wage, (workers + option1)->ID, (workers + option1)->pass);
-            worker.menu();
-        }
-    }
-    else
-    {
-        managers = writeFromFile(option2);
-        for (option1 = 0; option1 < managers->count; option1++)
-        {
-            if (ID == (managers + option1)->ID && pass == (managers + option1)->pass)
-            {
-                cout << "logining" << endl;
-                flag=false;
-                break;
-            }
-        }
-        if(flag){
-            cout<<"NO FUND"<<endl;
-            exit(1);
-        }
-        else{
-            Manager manager((managers + option1)->section, (managers + option1)->name, (managers + option1)->sex, (managers + option1)->age,(managers + option1)->type, (managers + option1)->wage, (managers + option1)->ID, (managers + option1)->pass);
-            manager.menu();
-        }
-    }
-}
 bool printAll(info_Worker worker[]){
     for (int i = 0; i < worker->count; i++){
         cout << (worker + i)->ID << " ";
@@ -231,8 +86,7 @@ int search(info_Worker worker[],int id){
     }
     return position;
 }
-int search(info_Manager manager[], int id)
-{
+int search(info_Manager manager[], int id){
     int position;
     for (position = 0; position < manager->count; position++)
     {
@@ -316,8 +170,7 @@ bool sortByAge(info_Worker worker[]){
         end--;
     }
 }
-bool sortByWage(info_Worker worker[])
-{
+bool sortByWage(info_Worker worker[]){
     int begin = 0;
     int end = worker->count - 1;
     while (begin < end)
@@ -346,16 +199,180 @@ bool sortByWage(info_Worker worker[])
     }
 }
 
+
+
 Person::Person(int ID, string pass){ // Person's Constructor
     this->ID = ID;
     this->pass=pass;
 }
+void Person::Prev(){
+    int role, option;
+    cout << "-------------------------------" << endl;
+    cout << "|          1.manager          |" << endl;
+    cout << "|          2.worker           |" << endl;
+    cout << "-------------------------------" << endl;
+    cin >> role;
+    cout << "-------------------------------" << endl;
+    cout << "|          1.login            |" << endl;
+    cout << "|          2.regist           |" << endl;
+    cout << "-------------------------------" << endl;
+    cin >> option;
+    if (option == 1){
+        login(role);
+    }
+    else if (option == 2){
+        regist(role);
+    }
+    else{
+        cerr << "Exiting program..." << endl;
+        exit(0);
+    }
+}
+void Person::menu(){
+    cout << "menu" << endl;
+}
+void Person::regist(int choice){
+    int option1 = 0,id,age;
+    float option2 = 0;
+    bool flag = true;
+    string pass,checkedpass,name,sex,type,section;
+    double wage;
+    info_Worker *workers = NULL;
+    info_Manager *managers = NULL;
+    cout << "-------------------------------" << endl;
+    cout << "input the ID you want to create:" << endl;
+    cout << "-------------------------------" << endl;
+    cin >> id;
+    if (choice == 2){
+        workers = writeFromFile(option1);
+        for (option1 = 0; option1 < workers->count; option1++){
+            if (id == (workers + option1)->ID){
+                cout << "registed" << endl;
+                flag = false;
+                break;
+            }
+        }
+        option2 = 1;
+    }
+    else{
+        managers = writeFromFile(option2);
+        for (option1 = 0; option1 < managers->count; option1++){
+            if (id == (managers + option1)->ID){
+                cout << "registed" << endl;
+                flag = false;
+                break;
+            }
+        }
+    }
+    if (!flag)
+    {
+        system("cls");
+        regist(choice);
+    }
+    else
+    {
+        cout << "please input your password:" << endl;
+        cin >> pass;
+        do
+        {
+            cout << "please input your password again:" << endl;
+            cin >> checkedpass;
+        } while (checkedpass != pass);
+    }
+    cout << "please input your name:" << endl;
+    cin >> name;
+    cout << "please input your sex(male/female):" << endl;
+    cin >> sex;
+    cout << "please input your age:" << endl;
+    cin >> age;
+    cout << "please input your type(PD/HRD/FD/TD/ED):" << endl;
+    cin >> type;
+    cout << "please input your wage:" << endl;
+    cin >> wage;
+    if (choice == 2)
+    {
+        (workers + (workers)->count)->ID = id;
+        (workers + (workers)->count)->pass = pass;
+        (workers + (workers)->count)->name = name;
+        (workers + (workers)->count)->sex = sex;
+        (workers + (workers)->count)->age = age;
+        (workers + (workers)->count)->type = type;
+        (workers + (workers)->count)->wage = wage;
+        (workers)->count++;
+        writeIntoFile(workers);
+    }
+    else
+    {
+        cout << "please input your section:" << endl;
+        cin >> section;
+        (managers + (managers)->count)->ID = id;
+        (managers + (managers)->count)->pass = pass;
+        (managers + (managers)->count)->name = name;
+        (managers + (managers)->count)->sex = sex;
+        (managers + (managers)->count)->age = age;
+        (managers + (managers)->count)->wage = wage;
+        (managers + (managers)->count)->type = type;
+        (managers + (managers)->count)->section = section;
+        (managers)->count++;
+        writeIntoFile(managers);
+    }
+    cout << "success in registing" << endl;
+    system("cls");
+    cout << "Jump to the login interface" << endl;
+    login(choice);
+}
+void Person::login(int choice){ //login
+    int option1 = 0, ID;
+    float option2 = 0;
+    bool flag = true;
+    info_Worker *workers = NULL;
+    info_Manager *managers = NULL;
+    string pass;
+    cout << "please input your ID:" << endl;
+    cin >> ID;
+    cout << "please input your password" << endl;
+    cin >> pass;
+    if (choice == 2){
+        workers = writeFromFile(option1);
+        for (option1 = 0; option1 < workers->count; option1++){
+            if (ID == (workers + option1)->ID && pass == (workers + option1)->pass){
+                cout << "logining" << endl;
+                flag = false;
+                break;
+            }
+        }
+        if (flag){
+            cout << "NO FUND" << endl;
+            exit(1);
+        }
+        else{
+            Worker worker((workers + option1)->name, (workers + option1)->sex, (workers + option1)->age, (workers + option1)->type, (workers + option1)->wage, (workers + option1)->ID, (workers + option1)->pass);
+            worker.menu();
+        }
+    }
+    else{
+        managers = writeFromFile(option2);
+        for (option1 = 0; option1 < managers->count; option1++){
+            if (ID == (managers + option1)->ID && pass == (managers + option1)->pass){
+                cout << "logining" << endl;
+                flag = false;
+                break;
+            }
+        }
+        if (flag){
+            cout << "NO FUND" << endl;
+            exit(1);
+        }
+        else{
+            Manager manager((managers + option1)->section, (managers + option1)->name, (managers + option1)->sex, (managers + option1)->age, (managers + option1)->type, (managers + option1)->wage, (managers + option1)->ID, (managers + option1)->pass);
+            manager.menu();
+        }
+    }
+}
 Person::~Person(){
     cout<<"Person"<<endl;
 }
-void Person::menu(){
-    cout<<"menu"<<endl;
-}
+
 
 Worker::Worker(string name, string sex, int age, string type, double wage, int ID, string pass) : Person(ID, pass)
 {
@@ -384,6 +401,7 @@ void Worker::menu(){
     }
 }
 void Worker::display() const{
+    cout<<"information:"<<endl;
     cout << "ID:" << this->ID << endl;
     cout << "name:" << this->name << endl;
     cout << "sex:" << this->sex << endl;
@@ -395,7 +413,7 @@ void Worker::Editor(){
     string temp;
     int option;
     info_Worker *p = writeFromFile(option);
-    int target=search(p,this->ID);
+    int target = search(p, this->ID);
     cout<<"what do you want do edit?"<<endl;
     cout << "1.name" << endl;
     cout << "2.password" << endl;
@@ -404,8 +422,7 @@ void Worker::Editor(){
     cin>>option;
     cout<<"input content:"<<endl;
     cin>>temp;
-    switch (option)
-    {
+    switch (option){
     case 1:
         (p + target)->name = temp;
         break;
@@ -420,10 +437,14 @@ void Worker::Editor(){
         break;
     default:
         cout<<"NOT 1~4"<<endl;
+        system("cls");
+        Editor();
         break;
     }
     cout<<"edited"<<endl;
     writeIntoFile(p);
+    system("cls");
+    menu();
 }
 Worker::~Worker(){
     cout<<"Worker"<<endl;
@@ -448,8 +469,7 @@ void Manager::menu(){
     cout<<"4.display"<<endl;
     cout<<"5.editor"<<endl;
     cin>>choice;
-    switch (choice)
-    {
+    switch (choice){
     case 1:
         Add();
         break;
@@ -466,7 +486,8 @@ void Manager::menu(){
         Editor();
         break;
     default:
-        cout<<"error"<<endl;
+        cout<<"exiting programing"<<endl;
+        exit(0);
         break;
     }
 }
@@ -510,6 +531,8 @@ void Manager::Add(){
     (p)->count++;
     cout << p->count << endl;
     writeIntoFile(p);
+    system("cls");
+    menu();
 }
 void Manager::Delete(){
     string ch;
@@ -536,6 +559,8 @@ void Manager::Delete(){
         printAll(worker);
     }
     cout<<"finshed"<<endl;
+    system("cls");
+    menu();
 }
 void Manager::Editor(){
     int choice1;
@@ -554,8 +579,7 @@ void Manager::Editor(){
         cin>>option;
         cout<<"content"<<endl;
         cin>>temp;
-        switch (option)
-        {
+        switch (option){
         case 1:
             (manager+target)->name=temp;
             break;
@@ -571,13 +595,12 @@ void Manager::Editor(){
         writeIntoFile(manager);
     }
     else if(choice1==2){
-        int ID;
+        int ID, option;
         cout<<"ID:"<<endl;
         cin>>ID;
         info_Worker *worker = writeFromFile(choice1);
         int target = search(worker, ID);
         cout<<target<<endl;
-        int option;
         cout << "1.name" << endl;
         cout << "2.age" << endl;
         cout << "3.wage" << endl;
@@ -587,8 +610,7 @@ void Manager::Editor(){
         string temp;
         cout<<"content"<<endl;
         cin>>temp;
-        switch (option)
-        {
+        switch (option){
         case 1:
             (worker+target)->name=temp;
             break;
@@ -609,11 +631,12 @@ void Manager::Editor(){
         }
         writeIntoFile(worker);
     }
-    else
-    {
+    else{
         cerr<<"error"<<endl;
         exit(1);
     }
+    system("cls");
+    menu();
 }
 void Manager::Sort(){
     int option1;
@@ -625,8 +648,7 @@ void Manager::Sort(){
     cin>>option1;
     info_Worker *worker=writeFromFile(option1);
     info_Worker *newworker=sortBysection(this->section,worker);
-    switch (option1)
-    {
+    switch (option1){
     case 1:
         sortByID(newworker);
         printAll(newworker);

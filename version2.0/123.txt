@@ -1,0 +1,26 @@
+class infoManager{
+    private:
+        infoManager *next=NULL;
+        static int count;
+    public:
+        info_Manager *information = NULL;
+        infoManager();
+        static int getLength();
+        infoManager nextinfo(infoManager *);
+        ~infoManager();
+};
+
+infoManager::infoManager(){
+    count++;
+}
+int infoManager::getLength(){
+    return count;
+}
+infoManager infoManager::nextinfo(infoManager *ptr){
+    this->next=ptr;
+
+}
+infoManager::~infoManager(){
+    delete information;
+}
+

@@ -27,16 +27,20 @@ typedef struct info_Manager
     string pass;
     int count;
 } info_Manager;
+
 class Person{
 protected:
     int ID;
     string pass;
 public:
     Person(int,string);
+    void Prev();
+    void login(int);
+    void regist(int);
+    void display() const;
+    void Editor();
+    void menu();
     ~Person();
-    virtual void display() const =0;
-    virtual void Editor() = 0;
-    virtual void menu() = 0;
 };
 class Worker:protected Person{
     protected:
@@ -65,5 +69,15 @@ class Manager:protected Worker{
         void menu();
         ~Manager();
 };
-void login(int);
-void regist(int);
+info_Worker *writeFromFile(int choice);
+info_Manager *writeFromFile(float choice);
+bool writeIntoFile(info_Worker workers[]);
+bool writeIntoFile(info_Manager managers[]);
+bool printAll(info_Worker worker[]);
+int search(info_Worker worker[], int id);
+int search(info_Manager manager[], int id);
+bool sortBySex(int option, info_Worker worker[]);
+info_Worker *sortBysection(string section, info_Worker worker[]);
+bool sortByID(info_Worker worker[]);
+bool sortByAge(info_Worker worker[]);
+bool sortByWage(info_Worker worker[]);
