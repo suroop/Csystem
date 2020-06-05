@@ -1,6 +1,6 @@
 #include "class.h"
 
-Info *infoList(Info *information1){ //ok读取文件数据
+Info *infoList(Info *information1){
     ifstream infile;
     Info *pptr = information1;
     infile.open("information.txt", ios::in);
@@ -11,23 +11,24 @@ Info *infoList(Info *information1){ //ok读取文件数据
     while (infile >> pptr->information.ID){
         infile >>pptr->information.pass;
         infile >> pptr->information.name;
-        infile >> pptr->information.sex;
         infile >> pptr->information.age;
-        infile >> pptr->information.type;
+        infile >> pptr->information.sex;
         infile >> pptr->information.wage;
+        infile >> pptr->information.type;
         infile >> pptr->information.section;
+        //cout << "infoList():"<<pptr->information.name<< endl;
+        //cout << "infoList():" << pptr->information.type << endl;
         Info *ptr = new Info();
         pptr->nextinfo(ptr);
         pptr = ptr;
     }
-    delete pptr;
     return information1;
 }
 int search(Info *ptr, int ID){
     bool flag=false;
     Info *temp = ptr;
     int count = ptr->getLength();
-    for (int i = 0; i < count-1; i++){
+    for (int i = 0; i < count; i++){
         if (temp->information.ID == ID){
             flag = true;
             break;
@@ -37,20 +38,23 @@ int search(Info *ptr, int ID){
     delete temp;
     return flag;
 }
-int search(Info *ptr,Info &pptr, int ID,string pass){
-    bool flag = false;
-    Info *temp = ptr;
+Info* search(Info *ptr, int ID,string pass){
+    Info *pptr=ptr;
+    int i;
     int count = ptr->getLength();
-    for (int i = 0; i < count - 2; i++){
-        if (temp->information.ID == ID && temp->information.pass==pass){
-            flag = true;
+    //cout<<"ID"<<ID<<"passwd"<<pass<<endl;
+    for (i = 0; i < count; i++){
+        //cout << "search():" << pptr->information.name << endl;
+        if (pptr->information.ID == ID && pptr->information.pass==pass){
+            //cout << "bingo():" << pptr->information.name << endl;
             break;
         }
-        temp = temp->getNext();
+        pptr = pptr->getNext();
     }
-    pptr=*temp;
-    delete temp;
-    return flag;
+    if(i==count){
+        return 0;
+    }
+    return pptr;
 }
 bool wirteIntoFile(Info *information1){
     ofstream outfile;
@@ -61,16 +65,18 @@ bool wirteIntoFile(Info *information1){
         exit(1);
     }
     int count=information1->getLength();
-    cout<<count<<endl;
-    for(int i=0;i<count;i++){
+    for(int i=0;i<count-1;i++){
         outfile << pptr->information.ID<<" ";
         outfile << pptr->information.pass << " ";
         outfile << pptr->information.name << " ";
+        //cout << "writeInfoFile:" << pptr->information.name<<endl; 
         outfile << pptr->information.age << " ";
         outfile << pptr->information.sex << " ";
         outfile << pptr->information.wage << " ";
         outfile << pptr->information.type << " ";
         outfile << pptr->information.section << endl;
+        //cout << "writeInfoFile(next):" << 
+        cout <<pptr->next->information.name<< endl;
         pptr = pptr->getNext();
     }
     return true;
@@ -79,50 +85,157 @@ bool printAll(Info *ptr){
     Info *temp=ptr;
     int count=ptr->getLength();
     for(int i=0;i<count-1;i++){
-        cout << "ID:";
-        cout << " password:";
-        cout << " name:";
-        cout << " age:";
-        cout << " sex:";
-        cout << " wage:";
-        cout << " type:" << endl;
+        cout << "ID:"<<temp->information.ID;
+        cout << " password:" << temp->information.pass;
+        cout << " name:" << temp->information.name;
+        cout << " age:" << temp->information.age;
+        cout << " sex:" << temp->information.sex;
+        cout << " wage:" << temp->information.wage;
+        cout << " type:" << temp->information.type;
+        cout << " section:" << temp->information.section << endl;
         temp=temp->getNext();
     }
-    delete temp;
     return true;
 }
+void editInfo(int option, string temp,Info *nowptr){
+    switch (option){
+    case 1:
+        nowptr->information.name = temp;
+        break;
+    case 2:
+        nowptr->information.pass = temp;
+        break;
+    case 3:
+        nowptr->information.type = temp;
+        break;
+    case 4:
+        nowptr->information.age = atoi(temp.c_str()); //string => int
+        break;
+    case 5:
+        nowptr->information.wage = atoi(temp.c_str());
+        break;
+    default:
+        cout << "NOT 1~4" << endl;
+        //system("cls");
+        exit(0);
+        break;
+    }
+    //cout << "editInfo()" << nowptr->information.age << endl;
+}
 bool sortBygender(Info *ptr,int choice){
-    string gender=choice==1?"male":"female";
+    string gender=choice==1?"female":"male";
     Info *temp = ptr;
     int count = ptr->getLength();
-    for (int i = 0; i < count-1; i++){
+    for (int i = 0; i < count; i++){
         if(temp->information.sex==gender){
-            cout << "ID:";
-            cout << " password:";
-            cout << " name:";
-            cout << " age:";
-            cout << " sex:";
-            cout << " wage:";
-            cout << " type:" << endl;
+            cout << "ID:" << temp->information.ID;
+            cout << " password:" << temp->information.pass;
+            cout << " name:"<< temp->information.name;
+            cout << " age:" << temp->information.age;
+            cout << " sex:" << temp->information.sex;
+            cout << " wage:" << temp->information.wage;
+            cout << " type:" << temp->information.type<<endl;
         }
         temp = temp->getNext();
     }
-    delete temp;
     return true;
 };
-bool sortByother(Info *ptr){
-    Info *temp=new Info();
-    int count=ptr->getLength();
-    for(int i=0;i<count;i++){
-        
+void sortByAge(Info *ptr){
+    int count = ptr->getLength();
+    int j;
+    info message;
+    Info *prevNode = ptr;
+    Info *nextNode = ptr->getNext();
+    for (int i = 1; i <= count - 2; i++){ 
+        for (j = 1; j <= count - i - 1; j++){
+            if ((prevNode->information.age) > (nextNode->information.age)){
+                message = prevNode->returnInfo();
+                prevNode->information = nextNode->information;
+                nextNode->information = message;
+            }
+            nextNode = nextNode->getNext();
+        }
+        if ((prevNode->information.age) > (nextNode->information.age)){
+            message = prevNode->information;
+            prevNode->information = nextNode->information;
+            nextNode->information = message;
+        }
+        prevNode = prevNode->getNext();
+        nextNode = prevNode->getNext();
     }
+    if ((prevNode->information.age) > (nextNode->information.age)){
+        message = prevNode->information;
+        prevNode->information = nextNode->information;
+        nextNode->information = message;
+    }
+    printAll(ptr);
+}
+void sortByWage(Info *ptr){
+    int count = ptr->getLength();
+    int j;
+    info message;
+    Info *prevNode = ptr;
+    Info *nextNode = ptr->getNext();
+    for (int i = 1; i <= count - 2; i++){
+        for (j = 1; j <= count - i - 1; j++){
+            if ((prevNode->information.wage) > (nextNode->information.wage)){
+                message = prevNode->returnInfo();
+                prevNode->information = nextNode->information;
+                nextNode->information = message;
+            }
+            nextNode = nextNode->getNext();
+        }
+        if ((prevNode->information.wage) > (nextNode->information.wage)){
+            message = prevNode->information;
+            prevNode->information = nextNode->information;
+            nextNode->information = message;
+        }
+        prevNode = prevNode->getNext();
+        nextNode = prevNode->getNext();
+    }
+    if ((prevNode->information.wage) > (nextNode->information.wage)){
+        message = prevNode->information;
+        prevNode->information = nextNode->information;
+        nextNode->information = message;
+    }
+    printAll(ptr);
+}
+void sortByID(Info *ptr){
+    int count = ptr->getLength();
+    int j;
+    info message;
+    Info *prevNode = ptr;
+    Info *nextNode = ptr->getNext();
+    for (int i = 1; i <= count - 2; i++){
+        for (j = 1; j <= count - i - 1; j++){
+            if ((prevNode->information.ID) > (nextNode->information.ID)){
+                message = prevNode->returnInfo();
+                prevNode->information = nextNode->information;
+                nextNode->information = message;
+            }
+            nextNode = nextNode->getNext();
+        }
+        if ((prevNode->information.ID) > (nextNode->information.ID)){
+            message = prevNode->information;
+            prevNode->information = nextNode->information;
+            nextNode->information = message;
+        }
+        prevNode = prevNode->getNext();
+        nextNode = prevNode->getNext();
+    }
+    if ((prevNode->information.ID) > (nextNode->information.ID)){
+        message = prevNode->information;
+        prevNode->information = nextNode->information;
+        nextNode->information = message;
+    }
+    printAll(ptr);
 }
 
-Info::Info(){   //ok
+int Info::count = 0;
+Info::Info(){
     count++;
 }
-int Info::count=0;
-int Info::getLength(){      //ok
+int Info::getLength(){     
     return count;
 }
 bool Info::insertAfter(Info *temp){
@@ -130,15 +243,16 @@ bool Info::insertAfter(Info *temp){
     this->nextinfo(temp);
 }
 bool Info::deleteAfter(){
-    Info *temp=new Info();
-    temp=this->getNext();
+    Info *temp = this->getNext();
+    info message=temp->returnInfo();
+    this->setterInfo(message.type, message.wage, message.name, message.age, message.sex, message.ID, message.pass, message.section);
     this->nextinfo(temp->getNext());
     delete temp;
     return true;
 }
-info Info::returnInfo(){ //ok
+info Info::returnInfo(){
     info message;
-    cout<<"ok"<<endl;
+    //cout <<"returnInfo "<<this->information.name << endl;
     message.ID=this->information.ID;
     message.pass = this->information.pass;
     message.name = this->information.name;
@@ -162,7 +276,7 @@ void Info::setterInfo(string type, double wage, string name, int age, string sex
 Info *Info::nextinfo(Info *ptr){
     this->next = ptr;
 }
-Info *Info::getNext(){      //ok
+Info *Info::getNext(){
     return this->next;
 };
 Info::~Info(){
@@ -181,7 +295,7 @@ void Person::Prev(){        //ok
     cout << "-------------------------------" << endl;
     cin >> option;
     Info *ptr = new Info();
-    Info *newptr = infoList(ptr); //duo jia le yi ge count(6)
+    Info *newptr = infoList(ptr);
     if (option == 1){
         system("cls");
         login(newptr);
@@ -195,13 +309,13 @@ void Person::Prev(){        //ok
         exit(0);
     }
 }
-void Person::display() const{       //ok
+void Person::display(Info *,Info *){       //ok
     cout<<"display"<<endl;
 };
-void Person::menu(){            //ok
+void Person::menu(Info *ptr,Info *pptr){            //ok
     cout << "menu" << endl;
 }
-void Person::Editor(){      //ok
+void Person::Editor(Info * ptr,Info *pptr){ //ok
     cout << "Editor" << endl;
 };
 void Person::regist(Info *newptr){
@@ -223,7 +337,7 @@ void Person::regist(Info *newptr){
         system("cls");
         regist(newptr);
     }
-    Info *temptr=new Info();        //count you jia le yi(7)
+    Info *temptr=new Info();
     string pass,checkpass,name,sex,type,section="NULL";
     int age;
     double wage;
@@ -262,12 +376,10 @@ void Person::regist(Info *newptr){
     cout << "         input your type       " << endl;
     cout << "-------------------------------" << endl;
     cin >> type;
-    if(1==1){
-        cout << "-------------------------------" << endl;
-        cout << "      input your section       " << endl;
-        cout << "-------------------------------" << endl;
-        cin >> section;
-    }
+    cout << "-------------------------------" << endl;
+    cout << "      input your section       " << endl;
+    cout << "-------------------------------" << endl;
+    cin >> section;
     temptr->setterInfo(type, wage, name, age, sex, ID, pass,section);
     newptr->insertAfter(temptr);
     cout << "-------------------------------" << endl;
@@ -275,14 +387,13 @@ void Person::regist(Info *newptr){
     cout << "-------------------------------" << endl;
     system("cls");
     wirteIntoFile(newptr);
-    delete temptr;
     login(newptr);
 }
 void Person::login(Info *nowptr){ //login
     bool flag = true;
     int ID;
     string pass;
-    Info *pptr=new Info();
+    Info *pptr=NULL;
     cout << "-------------------------------" << endl;
     cout << "    please input your ID      :" << endl;
     cout << "-------------------------------" << endl;
@@ -291,8 +402,9 @@ void Person::login(Info *nowptr){ //login
     cout << "  please input your password  :" << endl;
     cout << "-------------------------------" << endl;
     cin >> pass;
+    pptr=search(nowptr,ID,pass);
     try{
-        if (!search(nowptr,*pptr,ID,pass)){
+        if (!ID){
             throw ID;
         }
     }
@@ -305,12 +417,11 @@ void Person::login(Info *nowptr){ //login
     info message = pptr->returnInfo();
     if(message.section=="NULL"){
         guy = new Worker(message.name, message.sex, message.age, message.type, message.wage, message.ID, message.pass);
-        delete pptr;
-        guy->menu();
+        guy->menu(nowptr,pptr);
     }
     else{
         guy = new Manager(message.section, message.name, message.sex, message.age, message.type, message.wage, message.ID, message.pass);
-        guy->menu();
+        guy->menu(nowptr,pptr);
     }
     delete guy;
 }
@@ -327,26 +438,31 @@ Worker::Worker(string name, string sex, int age, string type, double wage, int I
     this->ID = ID;
     this->pass = pass;
 }
-void Worker::menu(){        //ok
+void Worker::menu(Info *ptr,Info *pptr){       
     int choice;
     cout << "--------------------------------" << endl;
     cout << "|        input a number        |"<<endl;
     cout << "--------------------------------" << endl;
     cout << "|           1.display          |"<<endl;
     cout << "|           2.edit             |"<<endl;
+    cout << "|           3.exit             |" << endl;
     cout << "--------------------------------" << endl;
     cin>>choice;
     if(choice==1){
-        display();
+        display(ptr, pptr);
     }
     else if(choice==2){
-        Editor();
+        Editor(ptr,pptr);
+    }
+    else if(choice==3){
+        exit(0);
     }
     else{
-        menu();
+        menu(ptr,pptr);
     }
 }
-void Worker::display() const{       //ok
+void Worker::display(Info *ptr, Info *pptr){ 
+    int num;
     cout << "-----------information---------" << endl;
     cout << "|ID: " << this->ID << endl;
     cout << "-------------------------------" << endl;
@@ -360,23 +476,18 @@ void Worker::display() const{       //ok
     cout << "-------------------------------" << endl;
     cout << "|wage " << this->wage << endl;
     cout << "-------------------------------" << endl;
+    cout << "| type number one to the menu |";
+    cout << "-------------------------------" << endl;
+    if(num==1){
+        menu(ptr,pptr);  
+    }
+    else{
+        exit(0);
+    }
 }
-void Worker::Editor(){
+void Worker::Editor(Info *ptr,Info *pptr){
     int option;
     string temp;
-    Info *ptr=new Info();
-    Info *nowptr = infoList(ptr);
-    try{
-        if (search(nowptr, ID))
-        {
-            throw ID;
-        }
-    }
-    catch (const exception &e){
-        cout << "-------------------------------" << endl;
-        cout << "        ID was registedd       " << endl;
-        cout << "-------------------------------" << endl;
-    }
     cout << "-------------------------------" << endl;
     cout << "|  what do you want do edit?  |" << endl;
     cout << "-------------------------------" << endl;
@@ -386,36 +497,24 @@ void Worker::Editor(){
     cout << "|            4.age            |" << endl;
     cout << "-------------------------------" << endl;
     cin >> option;
+    if(option>4||option<1){
+        cout << "-------------------------------" << endl;
+        cout << "|        OPTION NO FUND        |"<<endl;
+        cout << "-------------------------------" << endl;
+        Editor(ptr,pptr);
+    }
     cout << "-------------------------------" << endl;
     cout << "|        input content:       |" << endl;
     cout << "-------------------------------" << endl;
     cin >> temp;
-    /*switch (option)
-    {
-    case 1:
-        nowptr->information.name = temp;
-        break;
-    case 2:
-        nowptr->information.pass = temp;
-        break;
-    case 3:
-        nowptr->information.type = temp;
-        break;
-    case 4:
-        nowptr->information.age = atoi(temp.c_str()); //string => int
-        break;
-    default:
-        cout << "NOT 1~4" << endl;
-        system("cls");
-        Editor();
-        break;
-    }*/
-    wirteIntoFile(nowptr);
+    editInfo(option,temp,pptr);
+    printAll(ptr);
+    wirteIntoFile(ptr);
     system("cls");
-    menu();
+    menu(ptr,pptr);
 }
 Worker::~Worker(){
-    cout<<"Worker"<<endl;
+    cout<<"~Worker()"<<endl;
 }
 
 Manager::Manager(string section, string name, string sex, int age, string type, double wage, int ID, string pass) : Worker(name, sex, age,type, wage, ID,pass){
@@ -428,7 +527,7 @@ Manager::Manager(string section, string name, string sex, int age, string type, 
     this->type = type;
     this->section=section;
 }
-void Manager::menu(){       //ok
+void Manager::menu(Info *ptr,Info *pptr){       //ok
     int choice;
     cout << "-------------------------------" << endl;
     cout << "|        input a number       |" << endl;
@@ -441,28 +540,28 @@ void Manager::menu(){       //ok
     cout << "-------------------------------" << endl;
     cin>>choice;
     switch (choice){
-    case 1:
-        Add();
-        break;
-    case 2:
-        Sort();
-        break;
-    case 3:
-        Delete();
-        break;
-    case 4:
-        display();
-        break;
-    case 5:
-        Editor();
-        break;
-    default:
-        cout<<"exiting programing"<<endl;
-        exit(0);
-        break;
+        case 1:
+            Add(ptr,pptr);
+            break;
+        case 2:
+            Sort(ptr,pptr);
+            break;
+        case 3:
+            Delete(ptr,pptr);
+            break;
+        case 4:
+            display(ptr,pptr);
+            break;
+        case 5:
+            Editor(ptr,pptr);
+            break;
+        default:
+            cout<<"exiting programing"<<endl;
+            exit(0);
+            break;
     }
 }
-void Manager::Add(){
+void Manager::Add(Info *ptr, Info *pptr){
     int ID, age;
     double wage;
     bool flag=true;
@@ -471,10 +570,8 @@ void Manager::Add(){
     cout << "|        input the ID         |" << endl;
     cout << "-------------------------------" << endl;
     cin >> ID;
-    Info *ptr = new Info();
-    Info *newptr = infoList(ptr);
     try{
-        if (search(newptr, ID)){
+        if (search(ptr, ID)){
             throw ID;
         }
     }
@@ -500,48 +597,47 @@ void Manager::Add(){
     cin>>type;
     Info *temp=new Info();
     temp->setterInfo(type,wage,name,age,sex,ID,pass,section);
-    newptr->insertAfter(temp);
-    wirteIntoFile(newptr);
+    ptr->insertAfter(temp);
+    wirteIntoFile(ptr);
     system("cls");
-    menu();
+    menu(ptr,pptr);
 }
-void Manager::Delete(){
-    string ch;
+void Manager::Delete(Info * ptr,Info *pptr){
+    string ch,pass;
     bool flag=true;
     int id;
     cout << "-------------------------------" << endl;
     cout << "|  The ID you want to delete:  " << endl;
     cout << "-------------------------------" << endl;
     cin>>id;
-    Info *ptr = new Info();
-    Info *nowptr = infoList(ptr);
-    try
-    {
-        if (search(nowptr, id))
-        {
+    cout << "-------------------------------" << endl;
+    cout << "|          The pass           |" << endl;
+    cout << "-------------------------------" << endl;
+    cin >> pass;
+    Info *nowptr = search(ptr, id, pass);
+    try{
+        if (!id){
             throw id;
         }
     }
-    catch (const exception &e)
-    {
+    catch (const exception &e){
         cout << "-------------------------------" << endl;
         cout << "|      can't find the ID      |" << endl;
         cout << "-------------------------------" << endl;
     }
-    info *message=NULL;
-    nowptr->returnInfo();
+    info message = nowptr->returnInfo();
     cout << "----------information----------" << endl;
-    cout << "|ID:" << message->ID << endl;
+    cout << "|ID:" << message.ID << endl;
     cout << "-------------------------------" << endl;
-    cout << "|name:" << message->name << endl;
+    cout << "|name:" << message.name << endl;
     cout << "-------------------------------" << endl;
-    cout << "|sex:" << message->sex << endl;
+    cout << "|sex:" << message.sex << endl;
     cout << "-------------------------------" << endl;
-    cout << "|age:" << message->age << endl;
+    cout << "|age:" << message.age << endl;
     cout << "-------------------------------" << endl;
-    cout << "|type:" << message->type << endl;
+    cout << "|type:" << message.type << endl;
     cout << "-------------------------------" << endl;
-    cout << "|wage" << message->wage << endl;
+    cout << "|wage" << message.wage << endl;
     cout << "-------------------------------" << endl;
     cout<<"sure?(Y/N)"<<endl;
     cin>>ch;
@@ -550,16 +646,16 @@ void Manager::Delete(){
     }
     else{
         system("cls");
-        menu();
+        menu(ptr,pptr);
     }
-    wirteIntoFile(nowptr);
+    wirteIntoFile(ptr);
     cout << "-------------------------------" << endl;
     cout << "|           finshed           |"<<endl;
     cout << "-------------------------------" << endl;
     system("cls");
-    menu();
+    menu(ptr,pptr);
 }
-void Manager::Editor(){
+void Manager::Editor(Info * ptr,Info *pptr){
     int choice;
     cout << "-------------------------------" << endl;
     cout << "|      input your choice      |" << endl;
@@ -569,9 +665,7 @@ void Manager::Editor(){
     cout << "-------------------------------" << endl;
     cin>>choice;
     if(choice==1){
-        Info *ptr = new Info();
-        Info *nowptr = infoList(ptr);
-        search(nowptr,this->ID);
+        Info *nowptr =search(ptr,this->ID,this->pass);
         int option;
         string temp;
         cout << "-------------------------------" << endl;
@@ -583,41 +677,31 @@ void Manager::Editor(){
         cout << "|            4.age            |" << endl;
         cout << "-------------------------------" << endl;
         cin >> option;
+        if (option > 4 || option < 1){
+            cout << "-------------------------------" << endl;
+            cout << "|        OPTION NO FUND        |" << endl;
+            cout << "-------------------------------" << endl;
+            Editor(ptr,pptr);
+        }
         cout << "-------------------------------" << endl;
         cout << "|        input content:       |" << endl;
         cout << "-------------------------------" << endl;
         cin >> temp;
-        /*switch (option){
-        case 1:
-            nowptr->information.name = temp;
-            break;
-        case 2:
-            nowptr->information.pass = temp;
-            break;
-        case 3:
-            nowptr->information.type = temp;
-            break;
-        case 4:
-            nowptr->information.age = atoi(temp.c_str()); //string => int
-            break;
-        default:
-            cout << "NOT 1~4" << endl;
-            system("cls");
-            Editor();
-            break;
-        }*/
-        wirteIntoFile(nowptr);
+        editInfo(option,temp,nowptr);
+        wirteIntoFile(ptr);
     }
     else if(choice==2){
-        Info *ptr = new Info();
-        Info *nowptr = infoList(ptr);
-        search(nowptr, this->ID);
         int option,ID;
-        string temp;
+        string temp,pass;
         cout << "-------------------------------" << endl;
         cout << "|      input worker's ID      |" << endl;
         cout << "-------------------------------" << endl;
         cin>>ID;
+        cout << "-------------------------------" << endl;
+        cout << "|     input worker's pass     |" << endl;
+        cout << "-------------------------------" << endl;
+        cin >> pass;
+        Info *nowptr =search(ptr, ID,pass);
         cout << "-------------------------------" << endl;
         cout << "|  what do you want do edit?  |" << endl;
         cout << "-------------------------------" << endl;
@@ -632,41 +716,20 @@ void Manager::Editor(){
         cout << "|        input content:       |" << endl;
         cout << "-------------------------------" << endl;
         cin >> temp;
-        /*switch (option){
-            case 1:
-                nowptr->information.name = temp;
-                break;
-            case 2:
-                nowptr->information.pass = temp;
-                break;
-            case 3:
-                nowptr->information.type = temp;
-                break;
-            case 4:
-                nowptr->information.age = atoi(temp.c_str()); //string => int
-                break;
-            case 5:
-                nowptr->information.wage = atoi(temp.c_str());
-                break;
-            default:
-                cout << "NOT 1~5" << endl;
-                system("cls");
-                Editor();
-                break;
-        }*/
-        wirteIntoFile(nowptr);
+        editInfo(option,temp,nowptr);
+        wirteIntoFile(ptr);
     }
     else{
         cout << "-------------------------------" << endl;
         cerr << "|  input the correct number!  |" << endl;
         cout << "-------------------------------" << endl;
         system("cls");
-        Editor();
+        Editor(ptr,pptr);
     }
     system("cls");
-    menu();
+    menu(ptr,pptr);
 }
-void Manager::Sort(){
+void Manager::Sort(Info *ptr,Info *pptr){
     int option;
     cout << "-------------------------------" << endl;
     cout << "|          1.by ID            |" << endl;
@@ -675,30 +738,29 @@ void Manager::Sort(){
     cout << "|          4.by wage          |" << endl;
     cout << "-------------------------------" << endl;
     cin>>option;
-    Info *p=new Info();
     switch (option){
     case 1:
-        printAll(p);
+        sortByID(ptr);
         break;
     case 2:
         cout << "1.female" << endl;
         cout << "2.male" << endl;
         cin>>option;
-        sortBygender(p,option);
+        sortBygender(ptr,option);
         break;
     case 3:
-        //sortByAge(newworker);
-        printAll(p);
+        sortByAge(ptr);
         break;
     case 4:
-        //sortByWage(newworker);
-        printAll(p);
+        sortByWage(ptr);
         break;
     default:
         break;
     }
-} 
-void Manager::display() const{      //ok
+    menu(ptr,pptr);
+}
+void Manager::display(Info *ptr, Info * pptr){
+    int option;
     cout << "----------information----------" << endl;
     cout << "|ID: " << this->ID << endl;
     cout << "-------------------------------" << endl;
@@ -714,7 +776,16 @@ void Manager::display() const{      //ok
     cout << "-------------------------------" << endl;
     cout << "|section: " << this->section << endl;
     cout << "-------------------------------" << endl;
+    cout << "|      type 1 to the menu     |"<<endl;
+    cout << "-------------------------------" << endl;
+    cin>>option;
+    if(option==1){
+        menu(ptr,pptr);
+    }
+    else{
+        exit(0);
+    }
 }
 Manager::~Manager(){    
-    cout<<"Manager"<<endl;
+    cout<<"~Manager()"<<endl;
 }
