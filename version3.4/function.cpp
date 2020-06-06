@@ -22,6 +22,7 @@ Info *infoList(Info *information1){
         pptr->nextinfo(ptr);
         pptr = ptr;
     }
+    delete pptr;
     return information1;
 }
 int search(Info *ptr, int ID){
@@ -35,7 +36,6 @@ int search(Info *ptr, int ID){
         }
         temp=temp->getNext();
     }
-    delete temp;
     return flag;
 }
 Info* search(Info *ptr, int ID,string pass){
@@ -51,9 +51,9 @@ Info* search(Info *ptr, int ID,string pass){
         }
         pptr = pptr->getNext();
     }
-    if(i==count){
-        return 0;
-    }
+    /*if(i==count){
+        return NULL;
+    }*/
     return pptr;
 }
 bool wirteIntoFile(Info *information1){
@@ -84,7 +84,7 @@ bool wirteIntoFile(Info *information1){
 bool printAll(Info *ptr){
     Info *temp=ptr;
     int count=ptr->getLength();
-    for(int i=0;i<count-1;i++){
+    for(int i=0;i<count;i++){
         cout << "ID:"<<temp->information.ID;
         cout << " password:" << temp->information.pass;
         cout << " name:" << temp->information.name;
@@ -146,16 +146,20 @@ void sortByAge(Info *ptr){
     info message;
     Info *prevNode = ptr;
     Info *nextNode = ptr->getNext();
-    for (int i = 1; i <= count - 2; i++){ 
-        for (j = 1; j <= count - i - 1; j++){
-            if ((prevNode->information.age) > (nextNode->information.age)){
+    for (int i = 1; i <= count - 2; i++)
+    {
+        for (j = 1; j <= count - i - 1; j++)
+        {
+            if ((prevNode->information.age) > (nextNode->information.age))
+            {
                 message = prevNode->returnInfo();
                 prevNode->information = nextNode->information;
                 nextNode->information = message;
             }
             nextNode = nextNode->getNext();
         }
-        if ((prevNode->information.age) > (nextNode->information.age)){
+        if ((prevNode->information.age) > (nextNode->information.age))
+        {
             message = prevNode->information;
             prevNode->information = nextNode->information;
             nextNode->information = message;
@@ -476,7 +480,7 @@ void Worker::display(Info *ptr, Info *pptr){
     cout << "-------------------------------" << endl;
     cout << "|wage " << this->wage << endl;
     cout << "-------------------------------" << endl;
-    cout << "| type number one to the menu |";
+    cout << "| type number one to the menu |" << endl;
     cout << "-------------------------------" << endl;
     if(num==1){
         menu(ptr,pptr);  
@@ -537,6 +541,7 @@ void Manager::menu(Info *ptr,Info *pptr){       //ok
     cout << "|            3.delete         |"<<endl;
     cout << "|            4.display        |"<<endl;
     cout << "|            5.editor         |"<<endl;
+    cout << "|            6.exit           |" << endl;
     cout << "-------------------------------" << endl;
     cin>>choice;
     switch (choice){
@@ -554,6 +559,9 @@ void Manager::menu(Info *ptr,Info *pptr){       //ok
             break;
         case 5:
             Editor(ptr,pptr);
+            break;
+        case 6:
+            exit(0);
             break;
         default:
             cout<<"exiting programing"<<endl;
@@ -616,7 +624,7 @@ void Manager::Delete(Info * ptr,Info *pptr){
     cin >> pass;
     Info *nowptr = search(ptr, id, pass);
     try{
-        if (!id){
+        if (nowptr==NULL){
             throw id;
         }
     }
